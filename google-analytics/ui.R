@@ -10,7 +10,10 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("Google Analytics"),
+  tags$head(HTML("<link
+                 href='http://fons.googleapis.com/css?family=Papyrus'
+                 rel='stylesheet' type='text/css'>")),
+  titlePanel(h2("Google Analytics", style = "font-family: 'Papyrus'; color: green; font-size: 64px;")),
   sidebarLayout(
     sidebarPanel(
       dateRangeInput(inputId = 'dateRange', label = "Date range",
@@ -30,6 +33,9 @@ shinyUI(fluidPage(
                     value = FALSE)
     ),
     mainPanel(
+      h3("Selections"),
+      HTML("<p>Please choose one of these <strong>choices</strong> to view a figure or summary.</p>
+           <p>Do note that the <i>map</i> doesn't work for some reason.</p>"),
       tabsetPanel(
         tabPanel("Summary", textOutput("textDisplay")),
         tabPanel("Trend", plotOutput("trend")),
