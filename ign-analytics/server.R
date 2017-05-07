@@ -1,26 +1,26 @@
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+
 
 library(shiny)
+library(dplyr)
+library(ggplot2)
 
-# Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-   
-  output$distPlot <- renderPlot({
+  a <- read.csv("~/Documents/r-practice/ign-analytics/ign.csv")
+  rxData <- reactive({
+    newData <- filter(a, release_year %in% input$theYear)
+    newData <- filter(newData, platform %in% input$thePlatform)
+    return(newData)
+  })
     
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2] 
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  output$plotDisplay <- renderPlot({
+    groupData <- group_by(rxData(), release_year, platform)
+    groupData$Year <- groupData$release_year
+    groupData$Score <- groupData$score
     
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    thePlot <- ggplot(groupData, aes_string(x = "Year",
+                                            y = "Score")) + geom_bar(stat = "identity")
     
+    print(thePlot)
   })
   
 })
